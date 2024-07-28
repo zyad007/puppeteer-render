@@ -10,7 +10,18 @@ app.get('/', (req, res) => {
 
 app.get('/scrape', async (req, res) => {
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--single-process",
+            "--no-zygote"
+        ],
+        executablePath: process.env.NODE_ENV === 'production' 
+        ? process.env.PUPPETEER_EXECUTABLE_PATH
+        : puppeteer.executablePath(),
+
+    });
     const page = await browser.newPage();
 
     // Navigate the page to a URL.
